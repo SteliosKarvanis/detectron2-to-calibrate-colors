@@ -7,6 +7,33 @@
 
 typedef unsigned char UC;
 
+int clamp(int value, int min, int max);
+void yuvToRgb(int y, int u, int v, int *r, int *g, int *b);
+void uyvyToRgb(UC *uyvy, UC *rgb, int width, int height);
+void saveImage(int i);
+
+SpinnakerFrameGrabber SpinnakerFrameGrabber(false, 0);
+int cols = SpinnakerFrameGrabber.getImageWidth();
+int rows = SpinnakerFrameGrabber.getImageHeight();
+
+int main() {
+    SpinnakerFrameGrabber.startCapturing();
+
+    int i = 0;
+
+    while(1) {
+        char c;
+        std::cin >> c;
+        if (c == 'c') {
+            saveImage(i);
+            i++;
+        }
+
+        std::cout << i << '\n';
+    }
+
+}
+
 int clamp(int value, int min, int max) {
     return std::max(min, std::min(max, value));
 }
@@ -50,11 +77,6 @@ void uyvyToRgb(UC *uyvy, UC *rgb, int width, int height) {
     }
 }
 
-SpinnakerFrameGrabber SpinnakerFrameGrabber(false, 0);
-int cols = SpinnakerFrameGrabber.getImageWidth();
-int rows = SpinnakerFrameGrabber.getImageHeight();
-
-
 void saveImage(int i){
     unsigned char *uyvyframe = SpinnakerFrameGrabber.grabFrame();
 
@@ -66,22 +88,3 @@ void saveImage(int i){
 
     cv::imwrite("../dataset/test_" + std::to_string(i) + ".jpg", frameReturn);
 }
-
-int main() {
-    SpinnakerFrameGrabber.startCapturing();
-
-    int i = 0;
-
-    while(1) {
-        char c;
-        std::cin >> c;
-        if (c == 'c') {
-            saveImage(i);
-            i++;
-        }
-
-        std::cout << i << '\n';
-    }
-
-}
-
