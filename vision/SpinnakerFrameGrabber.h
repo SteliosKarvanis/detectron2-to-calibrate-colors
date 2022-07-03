@@ -2,8 +2,8 @@
 // Created by renan on 03/07/22.
 //
 
-#ifndef CT_EXAME_SPINNAKERFRAMESAVER_H
-#define CT_EXAME_SPINNAKERFRAMESAVER_H
+#ifndef CT_EXAME_SpinnakerFrameGrabber_H
+#define CT_EXAME_SpinnakerFrameGrabber_H
 
 #include "/opt/spinnaker/include/Spinnaker.h"
 #include <opencv2/opencv.hpp>
@@ -19,10 +19,10 @@ enum PixelFormat {
     HSV
 };
 
-class SpinnakerFrameSaver{
+class SpinnakerFrameGrabber{
 public:
-    SpinnakerFrameSaver(bool verbose = true, unsigned int camIndex = 0);
-    ~SpinnakerFrameSaver();
+    SpinnakerFrameGrabber(bool verbose = true, unsigned int camIndex = 0);
+    ~SpinnakerFrameGrabber();
 
     bool check();
     bool connectWithCamera(int cols, int rows, bool verbose = true, unsigned int camIndex = 0);
@@ -50,4 +50,4 @@ private:
     void printCameraInfo(const CameraPtr& pCam);
 };
 
-#endif //CT_EXAME_SPINNAKERFRAMESAVER_H
+#endif //CT_EXAME_SpinnakerFrameGrabber_H

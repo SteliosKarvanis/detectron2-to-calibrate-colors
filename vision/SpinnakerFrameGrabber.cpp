@@ -3,25 +3,25 @@
 //
 
 #include <iostream>
-#include "SpinnakerFrameSaver.h"
+#include "SpinnakerFrameGrabber.h"
 
 #define MAX_WIDTH 656
 #define MAX_HEIGHT 516
 
-SpinnakerFrameSaver::SpinnakerFrameSaver(bool verbose, unsigned int camIndex) {
+SpinnakerFrameGrabber::SpinnakerFrameGrabber(bool verbose, unsigned int camIndex) {
     this->connectWithCamera(MAX_WIDTH, MAX_HEIGHT, verbose, camIndex);
 }
 
-SpinnakerFrameSaver::~SpinnakerFrameSaver() {
+SpinnakerFrameGrabber::~SpinnakerFrameGrabber() {
     pCam->EndAcquisition();
     pCam->DeInit();
 }
 
-bool SpinnakerFrameSaver::check() {
+bool SpinnakerFrameGrabber::check() {
     return successCommunicationWithCamera;
 }
 
-bool SpinnakerFrameSaver::connectWithCamera(int cols, int rows, bool verbose, unsigned int camIndex) {
+bool SpinnakerFrameGrabber::connectWithCamera(int cols, int rows, bool verbose, unsigned int camIndex) {
     pSystem = System::GetInstance();
     CameraList camList = pSystem->GetCameras();
     this->cols = cols;
@@ -103,7 +103,7 @@ bool SpinnakerFrameSaver::connectWithCamera(int cols, int rows, bool verbose, un
     }
 }
 
-bool SpinnakerFrameSaver::startCapturing() {
+bool SpinnakerFrameGrabber::startCapturing() {
     try {
         pCam->BeginAcquisition();
         return true;
@@ -116,7 +116,7 @@ bool SpinnakerFrameSaver::startCapturing() {
     }
 }
 
-int SpinnakerFrameSaver::getImageWidth() {
+int SpinnakerFrameGrabber::getImageWidth() {
 //    Spinnaker::GenApi::INodeMap& snodeMap = pCam->GetNodeMap();
 //    Spinnaker::GenApi::CIntegerPtr ptrWidth = snodeMap.GetNode("Width");
 //
@@ -124,7 +124,7 @@ int SpinnakerFrameSaver::getImageWidth() {
     return this->cols;
 }
 
-int SpinnakerFrameSaver::getImageHeight() {
+int SpinnakerFrameGrabber::getImageHeight() {
 //    Spinnaker::GenApi::INodeMap& snodeMap = pCam->GetNodeMap();
 //    Spinnaker::GenApi::CIntegerPtr ptrHeight = snodeMap.GetNode("Height");
 
@@ -132,7 +132,7 @@ int SpinnakerFrameSaver::getImageHeight() {
     return this->rows;
 }
 
-unsigned char *SpinnakerFrameSaver::grabFrame() {
+unsigned char *SpinnakerFrameGrabber::grabFrame() {
     ImagePtr pResultImage;
 
     try {
@@ -157,15 +157,15 @@ unsigned char *SpinnakerFrameSaver::grabFrame() {
 
 }
 
-unsigned int SpinnakerFrameSaver::checkNumberOfCameras() {
+unsigned int SpinnakerFrameGrabber::checkNumberOfCameras() {
     return pSystem->GetCameras().GetSize();
 }
 
-void SpinnakerFrameSaver::blockConnection() {
+void SpinnakerFrameGrabber::blockConnection() {
     this->successCommunicationWithCamera = false;
 }
 
-void SpinnakerFrameSaver::setFrameRate(float desiredFrameRate) {
+void SpinnakerFrameGrabber::setFrameRate(float desiredFrameRate) {
     Spinnaker::GenApi::INodeMap& nodeMap = pCam->GetNodeMap();
     Spinnaker::GenApi::CFloatPtr ptrAcquisitionFrameRate = nodeMap.GetNode("AcquisitionFrameRate");
 
@@ -179,7 +179,7 @@ void SpinnakerFrameSaver::setFrameRate(float desiredFrameRate) {
     }
 }
 
-void SpinnakerFrameSaver::setImageSize(int width, int height) {
+void SpinnakerFrameGrabber::setImageSize(int width, int height) {
     Spinnaker::GenApi::INodeMap& nodeMap = pCam->GetNodeMap();
 
     try {
@@ -224,7 +224,7 @@ void SpinnakerFrameSaver::setImageSize(int width, int height) {
     }
 }
 
-void SpinnakerFrameSaver::setPixelFormat(PixelFormat pixelFormat) {
+void SpinnakerFrameGrabber::setPixelFormat(PixelFormat pixelFormat) {
 //    Some spinnaker pixel format is not working
     Spinnaker::GenApi::INodeMap& nodeMap = pCam->GetNodeMap();
 
@@ -259,7 +259,7 @@ void SpinnakerFrameSaver::setPixelFormat(PixelFormat pixelFormat) {
     }
 }
 
-void SpinnakerFrameSaver::useBuffer(int numBuffers) {
+void SpinnakerFrameGrabber::useBuffer(int numBuffers) {
     Spinnaker::GenApi::INodeMap& sNodeMap = pCam->GetTLStreamNodeMap();
 
     Spinnaker::GenApi::CIntegerPtr ptrBufferCount = sNodeMap.GetNode("StreamBufferCountManual");
@@ -275,13 +275,13 @@ void SpinnakerFrameSaver::useBuffer(int numBuffers) {
 
 }
 
-void SpinnakerFrameSaver::checkExpection(Exception e) {
+void SpinnakerFrameGrabber::checkExpection(Exception e) {
     if (e.GetError() != SPINNAKER_ERR_SUCCESS) {
         std::cout << e.GetFullErrorMessage() << "\n";
     }
 }
 
-void SpinnakerFrameSaver::setNodeEnum(const GenApi::INodeMap &nodeMap, const GenICam::gcstring &nodeLabel,
+void SpinnakerFrameGrabber::setNodeEnum(const GenApi::INodeMap &nodeMap, const GenICam::gcstring &nodeLabel,
                                         const GenICam::gcstring &value) {
     Spinnaker::GenApi::CEnumerationPtr ptrNodeEnum = nodeMap.GetNode(nodeLabel.c_str());
     if (!GenApi::IsWritable(ptrNodeEnum)) {
@@ -300,7 +300,7 @@ void SpinnakerFrameSaver::setNodeEnum(const GenApi::INodeMap &nodeMap, const Gen
     ptrNodeEnum->SetIntValue(valueEntry);
 }
 
-void SpinnakerFrameSaver::printCameraInfo(const CameraPtr& pCam) {
+void SpinnakerFrameGrabber::printCameraInfo(const CameraPtr& pCam) {
     Spinnaker::GenApi::INodeMap &nodeMap = pCam->GetNodeMap();
 
     std::cout << "\n*** DEVICE INFORMATION ***\n\n";

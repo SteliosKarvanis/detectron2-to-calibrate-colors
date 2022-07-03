@@ -15,8 +15,8 @@ find_package(OpenCV 3.4.2 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(ct_exame ../vision/main.cpp
-        ../vision/SpinnakerFrameSaver.cpp
-        ../vision/SpinnakerFrameSaver.h vision/main.cpp)
+        ../vision/SpinnakerFrameGrabber.cpp
+        ../vision/SpinnakerFrameGrabber.h vision/main.cpp)
 
 target_include_directories(ct_exame PUBLIC ${OpenCV_INCLUDE_DIRS} ${SPINNAKER_INCLUDE_DIRS})
 target_link_libraries(ct_exame PUBLIC ${OpenCV_LIBRARIES} ${SPINNAKER_LIBRARIES})

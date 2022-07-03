@@ -2,7 +2,7 @@
 // Created by renan on 03/07/22.
 //
 
-#include "SpinnakerFrameSaver.h"
+#include "SpinnakerFrameGrabber.h"
 #include <iostream>
 
 typedef unsigned char UC;
@@ -50,13 +50,13 @@ void uyvyToRgb(UC *uyvy, UC *rgb, int width, int height) {
     }
 }
 
-SpinnakerFrameSaver spinnakerFrameSaver(false, 0);
-int cols = spinnakerFrameSaver.getImageWidth();
-int rows = spinnakerFrameSaver.getImageHeight();
+SpinnakerFrameGrabber SpinnakerFrameGrabber(false, 0);
+int cols = SpinnakerFrameGrabber.getImageWidth();
+int rows = SpinnakerFrameGrabber.getImageHeight();
 
 
 void saveImage(int i){
-    unsigned char *uyvyframe = spinnakerFrameSaver.grabFrame();
+    unsigned char *uyvyframe = SpinnakerFrameGrabber.grabFrame();
 
     auto frameAux = cv::Mat(rows, cols, CV_8UC2, uyvyframe);
     cv::Mat frameReturn = cv::Mat(rows, cols, CV_8UC3);;
@@ -68,7 +68,7 @@ void saveImage(int i){
 }
 
 int main() {
-    spinnakerFrameSaver.startCapturing();
+    SpinnakerFrameGrabber.startCapturing();
 
     int i = 0;
 
