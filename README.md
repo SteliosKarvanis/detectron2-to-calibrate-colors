@@ -3,5 +3,6 @@
 
 Integrantes:
 
-Renan Ferreira
 Stelios Karvanis
+
+Renan Ferreira
