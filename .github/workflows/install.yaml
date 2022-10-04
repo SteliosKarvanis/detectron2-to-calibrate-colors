@@ -46,7 +46,10 @@
               wget -c -N https://github.com/renanalmd/spinnaker-sdk-test/raw/master/spinnaker-2.6.0.160-amd64.zip
               unzip -q spinnaker-2.6.0.160-amd64.zip
               cd spinnaker-2.6.0.160-amd64  
-              sudo apt-get   install libavcodec57 libavformat57 libswscale4 libswresample2 libavutil55 libusb-1.0-0
+              sudo apt-get install libavcodec58 libavformat58 \
+              libswscale5 libswresample3 libavutil56 libusb-1.0-0 \
+              libpcre2-16-0 libdouble-conversion3 libxcb-xinput0 \
+              libxcb-xinerama0              
               sudo dpkg -i libgentl_*.deb
               sudo dpkg -i libspinnaker_*.deb
               sudo dpkg -i libspinnaker-dev_*.deb
