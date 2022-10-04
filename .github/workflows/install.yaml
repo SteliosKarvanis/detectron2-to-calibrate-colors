@@ -2,7 +2,7 @@
 
   on:
     push:
-      branches: [feat_github_actions]
+      branches: []
 
   jobs:
     build:
@@ -74,3 +74,9 @@
               cmake ..
               make -j4
               sudo make install
+
+        - name: Upload SpinnakerFrameGrabber binary
+          uses: actions/upload-artifact@v3
+          with:
+            name: SpinnakerFrameGrabber
+            path: build/SpinnakerFrameGrabber
