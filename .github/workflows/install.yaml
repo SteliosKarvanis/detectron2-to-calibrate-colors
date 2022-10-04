@@ -1,0 +1,71 @@
+  name: CI SpinnakerFrameGrabber
+
+  on:
+    push:
+      branches: [feat_github_actions]
+
+  jobs:
+    build:
+      runs-on: ubuntu-20.04
+
+      steps:
+        - uses: actions/checkout@v2
+
+        - name: Install CMake 3.15.0
+          run: |
+            pushd /tmp/
+            wget https://cmake.org/files/v3.15/cmake-3.15.0.tar.gz
+            tar -xvf cmake-3.15.0.tar.gz
+            cd cmake-3.15.0
+            ./configure
+            make -j 4
+            sudo make install
+            sudo ldconfig
+            popd
+
+        - name: Download OpenCV
+          run: |
+              pushd /tmp/
+              wget -c -N https://github.com/Itseez/opencv/archive/3.4.2.zip -O opencv-3.4.2.zip
+              unzip -q opencv-3.4.2.zip
+              sudo apt-get install cmake libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev -y
+              pushd opencv-3.4.2
+        - name: Build OpenCV
+          run: |
+              mkdir build
+              cd build
+              cmake -G "Unix Makefiles" -D CMAKE_CXX_COMPILER=/usr/bin/g++ CMAKE_C_COMPILER=/usr/bin/gcc -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=OFF -D WITH_OPENGL=ON -D BUILD_FAT_JAVA_LIB=ON -D INSTALL_TO_MANGLED_PATHS=ON -D INSTALL_CREATE_DISTRIB=ON -D INSTALL_TESTS=ON -D ENABLE_FAST_MATH=ON -D WITH_IMAGEIO=ON -D BUILD_SHARED_LIBS=OFF -D WITH_GSTREAMER=ON ..
+              make -j4
+              sudo make install
+
+        - name: Download and Install Spinnaker
+          run: |
+              pushd /tmp/
+              wget -c -N https://github.com/renanalmd/spinnaker-sdk-test/blob/master/spinnaker-2.6.0.160-amd64.zip
+              unzip -q spinnaker-2.6.0.160-amd64.zip
+              cd spinnaker-2.6.0.160-amd64  
+              sudo apt-get   install libavcodec57 libavformat57 libswscale4 libswresample2 libavutil55 libusb-1.0-0
+              sudo dpkg -i libgentl_*.deb
+              sudo dpkg -i libspinnaker_*.deb
+              sudo dpkg -i libspinnaker-dev_*.deb
+              sudo dpkg -i libspinnaker-c_*.deb
+              sudo dpkg -i libspinnaker-c-dev_*.deb
+              sudo dpkg -i libspinvideo_*.deb
+              sudo dpkg -i libspinvideo-dev_*.deb
+              sudo dpkg -i libspinvideo-c_*.deb
+              sudo dpkg -i libspinvideo-c-dev_*.deb
+              sudo apt-get install -y ./spinview-qt_*.deb
+              sudo dpkg -i spinview-qt-dev_*.deb
+              sudo dpkg -i spinupdate_*.deb
+              sudo dpkg -i spinupdate-dev_*.deb
+              sudo dpkg -i spinnaker_*.deb
+              sudo dpkg -i spinnaker-doc_*.deb             
+              sudo ldconfig
+
+        - name: Build SpinnakerFrameGrabber binary
+          run: |
+              mkdir build
+              cd build
+              cmake ..
+              make -j4
+              sudo make install
