@@ -1,0 +1,68 @@
+vision/SpinnakerFrameGrabber.h:25:10: style:inconclusive: Technically the member function 'SpinnakerFrameGrabber::check' can be const. [functionConst]
+    bool check();
+         ^
+vision/SpinnakerFrameGrabber.cpp:22:29: note: Technically the member function 'SpinnakerFrameGrabber::check' can be const.
+bool SpinnakerFrameGrabber::check() {
+                            ^
+vision/SpinnakerFrameGrabber.h:25:10: note: Technically the member function 'SpinnakerFrameGrabber::check' can be const.
+    bool check();
+         ^
+vision/SpinnakerFrameGrabber.h:28:9: style:inconclusive: Technically the member function 'SpinnakerFrameGrabber::getImageHeight' can be const. [functionConst]
+    int getImageHeight();
+        ^
+vision/SpinnakerFrameGrabber.cpp:130:28: note: Technically the member function 'SpinnakerFrameGrabber::getImageHeight' can be const.
+int SpinnakerFrameGrabber::getImageHeight() {
+                           ^
+vision/SpinnakerFrameGrabber.h:28:9: note: Technically the member function 'SpinnakerFrameGrabber::getImageHeight' can be const.
+    int getImageHeight();
+        ^
+vision/SpinnakerFrameGrabber.h:29:9: style:inconclusive: Technically the member function 'SpinnakerFrameGrabber::getImageWidth' can be const. [functionConst]
+    int getImageWidth();
+        ^
+vision/SpinnakerFrameGrabber.cpp:122:28: note: Technically the member function 'SpinnakerFrameGrabber::getImageWidth' can be const.
+int SpinnakerFrameGrabber::getImageWidth() {
+                           ^
+vision/SpinnakerFrameGrabber.h:29:9: note: Technically the member function 'SpinnakerFrameGrabber::getImageWidth' can be const.
+    int getImageWidth();
+        ^
+vision/SpinnakerFrameGrabber.h:37:10: performance:inconclusive: Technically the member function 'SpinnakerFrameGrabber::setNodeEnum' can be static (but you may consider moving to unnamed namespace). [functionStatic]
+    void setNodeEnum(const Spinnaker::GenApi::INodeMap &nodeMap, const Spinnaker::GenICam::gcstring &nodeLabel, const Spinnaker::GenICam::gcstring &value);
+         ^
+vision/SpinnakerFrameGrabber.cpp:287:29: note: Technically the member function 'SpinnakerFrameGrabber::setNodeEnum' can be static (but you may consider moving to unnamed namespace).
+void SpinnakerFrameGrabber::setNodeEnum(const GenApi::INodeMap &nodeMap, const GenICam::gcstring &nodeLabel,
+                            ^
+vision/SpinnakerFrameGrabber.h:37:10: note: Technically the member function 'SpinnakerFrameGrabber::setNodeEnum' can be static (but you may consider moving to unnamed namespace).
+    void setNodeEnum(const Spinnaker::GenApi::INodeMap &nodeMap, const Spinnaker::GenICam::gcstring &nodeLabel, const Spinnaker::GenICam::gcstring &value);
+         ^
+vision/SpinnakerFrameGrabber.h:47:10: performance:inconclusive: Technically the member function 'SpinnakerFrameGrabber::checkExpection' can be static (but you may consider moving to unnamed namespace). [functionStatic]
+    void checkExpection(Spinnaker::Exception e);
+         ^
+vision/SpinnakerFrameGrabber.cpp:281:29: note: Technically the member function 'SpinnakerFrameGrabber::checkExpection' can be static (but you may consider moving to unnamed namespace).
+void SpinnakerFrameGrabber::checkExpection(Exception e) {
+                            ^
+vision/SpinnakerFrameGrabber.h:47:10: note: Technically the member function 'SpinnakerFrameGrabber::checkExpection' can be static (but you may consider moving to unnamed namespace).
+    void checkExpection(Spinnaker::Exception e);
+         ^
+vision/main.cpp:58:13: style: The scope of the variable 'y' can be reduced. [variableScope]
+            y, u, v;
+            ^
+vision/main.cpp:58:16: style: The scope of the variable 'u' can be reduced. [variableScope]
+            y, u, v;
+               ^
+vision/main.cpp:58:19: style: The scope of the variable 'v' can be reduced. [variableScope]
+            y, u, v;
+                  ^
+vision/SpinnakerFrameGrabber.cpp:167:0: style: The function 'blockConnection' is never used. [unusedFunction]
+
+^
+vision/SpinnakerFrameGrabber.cpp:22:0: style: The function 'check' is never used. [unusedFunction]
+
+^
+vision/SpinnakerFrameGrabber.cpp:163:0: style: The function 'checkNumberOfCameras' is never used. [unusedFunction]
+
+^
+vision/SpinnakerFrameGrabber.cpp:265:0: style: The function 'useBuffer' is never used. [unusedFunction]
+
+^
+nofile:0:0: information: Cppcheck cannot find all the include files (use --check-config for details) [missingInclude]
+
