@@ -8,6 +8,8 @@
 #define MAX_WIDTH 656
 #define MAX_HEIGHT 516
 
+using namespace Spinnaker;
+
 SpinnakerFrameGrabber::SpinnakerFrameGrabber(bool verbose, unsigned int camIndex) {
     this->connectWithCamera(MAX_WIDTH, MAX_HEIGHT, verbose, camIndex);
 }

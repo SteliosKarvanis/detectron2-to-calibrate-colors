@@ -5,10 +5,8 @@
 #ifndef CT_EXAME_SpinnakerFrameGrabber_H
 #define CT_EXAME_SpinnakerFrameGrabber_H
 
-#include "/opt/spinnaker/include/Spinnaker.h"
+#include "Spinnaker.h"
 #include <opencv2/opencv.hpp>
-
-using namespace Spinnaker;
 
 enum PixelFormat {
     YUYV = 0,
@@ -36,18 +34,18 @@ public:
     void setImageSize(int width, int height);
     void setPixelFormat(PixelFormat pixelFormat);
     void useBuffer(int numBuffers);
-    void setNodeEnum(const GenApi::INodeMap &nodeMap, const GenICam::gcstring &nodeLabel, const GenICam::gcstring &value);
+    void setNodeEnum(const Spinnaker::GenApi::INodeMap &nodeMap, const Spinnaker::GenICam::gcstring &nodeLabel, const Spinnaker::GenICam::gcstring &value);
 
 private:
     bool successCommunicationWithCamera;
-    SystemPtr pSystem;
-    CameraPtr pCam;
-    ImagePtr image;
+    Spinnaker::SystemPtr pSystem;
+    Spinnaker::CameraPtr pCam;
+    Spinnaker::ImagePtr image;
     int cols;
     int rows;
 
-    void checkExpection(Exception e);
-    void printCameraInfo(const CameraPtr& pCam);
+    void checkExpection(Spinnaker::Exception e);
+    void printCameraInfo(const Spinnaker::CameraPtr& pCam);
 };
 
 #endif //CT_EXAME_SpinnakerFrameGrabber_H
