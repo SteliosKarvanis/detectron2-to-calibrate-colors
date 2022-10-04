@@ -101,8 +101,9 @@ bool SpinnakerFrameGrabber::connectWithCamera(int cols, int rows, bool verbose, 
             return false;
         }
 
-        return successCommunicationWithCamera;
     }
+
+    return successCommunicationWithCamera;
 }
 
 bool SpinnakerFrameGrabber::startCapturing() {
