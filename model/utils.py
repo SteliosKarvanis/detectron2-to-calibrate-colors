@@ -16,7 +16,9 @@ import random
 import shutil
 from constants import *
 from utils import *
-
+import copy
+from detectron2.data import detection_utils as utils
+import torch
 
 def manage_datasets():
     os.makedirs(dataset_dir +'train/', exist_ok=True)
@@ -74,7 +76,7 @@ def custom_cfg():
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
     cfg.MODEL.DEVICE = "cuda"
     cfg.DATASETS.TRAIN = ("train",)
-    cfg.DATASETS.TEST = ("val")
+    cfg.DATASETS.TEST = ("test")
     cfg.DATALOADER.NUM_WORKERS = 2
     cfg.SOLVER.IMS_PER_BATCH = 3
     cfg.INPUT.RANDOM_FLIP = "horizontal"
@@ -85,3 +87,27 @@ def custom_cfg():
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512 
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = len(classes) 
     return cfg
+
+def custom_mapper(dataset_dict):
+    dataset_dict = copy.deepcopy(dataset_dict)  # it will be modified by code below
+    image = utils.read_image(dataset_dict["file_name"], format="BGR")
+    transform_list = [
+        T.Resize((800,600)),
+        T.RandomBrightness(0.8, 1.8),
+        T.RandomContrast(0.6, 1.3),
+        T.RandomSaturation(0.8, 1.4),
+        T.RandomRotation(angle=[90, 90]),
+        T.RandomLighting(0.7),
+        T.RandomFlip(prob=0.4, horizontal=False, vertical=True),
+    ]
+    image, transforms = T.apply_transform_gens(transform_list, image)
+    dataset_dict["image"] = torch.as_tensor(image.transpose(2, 0, 1).astype("float32"))
+
+    annos = [
+        utils.transform_instance_annotations(obj, transforms, image.shape[:2])
+        for obj in dataset_dict.pop("annotations")
+        if obj.get("iscrowd", 0) == 0
+    ]
+    instances = utils.annotations_to_instances(annos, image.shape[:2])
+    dataset_dict["instances"] = utils.filter_empty_instances(instances)
+    return dataset_dict
