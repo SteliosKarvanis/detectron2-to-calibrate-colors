@@ -14,7 +14,7 @@ for d in [file for file in os.listdir(test_dir) if not file.endswith('.json')]:
     outputs = predictor(im) 
     v = Visualizer(im[:, :, ::-1])
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    cv2.imwrite("test_" + str(i) + ".jpg", out.get_image()[..., ::-1])
+    cv2.imwrite("../test_" + str(i) + ".jpg", out.get_image()[..., ::-1])
     i += 1
 
 i = 0
@@ -23,5 +23,5 @@ for d in os.listdir(val_dir):
     outputs = predictor(im)
     v = Visualizer(im[:, :, ::-1])
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    cv2.imwrite("val_" + str(i) + ".jpg", out.get_image()[..., ::-1])
+    cv2.imwrite("../val_" + str(i) + ".jpg", out.get_image()[..., ::-1])
     i += 1
