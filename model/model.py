@@ -3,25 +3,17 @@ from utils import *
 
 
 cfg = custom_cfg()
+DatasetCatalog.register("test", lambda : get_data(test_dir))
+MetadataCatalog.get("test").set(thing_classes=classes)
+test_metadata = MetadataCatalog.get("test")
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth") 
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
 predictor = DefaultPredictor(cfg)
 
 
-i = 0
-for d in [file for file in os.listdir(test_dir) if not file.endswith('.json')]:    
-    im = cv2.imread(test_dir +"/"+ d)
+for index, filename in enumerate([file for file in os.listdir(test_dir) if not (file.endswith('.json') or file.startswith('output'))]):
+    im = cv2.imread(test_dir +"/"+ filename)
     outputs = predictor(im) 
-    v = Visualizer(im[:, :, ::-1])
+    v = Visualizer(im[:, :, ::-1], metadata=test_metadata) 
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    cv2.imwrite("../test_" + str(i) + ".jpg", out.get_image()[..., ::-1])
-    i += 1
-
-i = 0
-for d in os.listdir(val_dir):    
-    im = cv2.imread(val_dir + "/" + d)
-    outputs = predictor(im)
-    v = Visualizer(im[:, :, ::-1])
-    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    cv2.imwrite("../val_" + str(i) + ".jpg", out.get_image()[..., ::-1])
-    i += 1
+    cv2.imwrite(test_dir + "/output_" + filename, out.get_image()[..., ::-1])

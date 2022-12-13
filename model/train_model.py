@@ -13,6 +13,8 @@ class CustomTrainer(DefaultTrainer):
     def build_train_loader(cls, cfg):
         return build_detection_train_loader(cfg, mapper=custom_mapper)
 
+#trainer = CustomTrainer(cfg)
 trainer = DefaultTrainer(cfg)
+
 trainer.resume_or_load(resume=False)
 trainer.train()

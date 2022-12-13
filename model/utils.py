@@ -1,50 +1,61 @@
 import cv2
-from detectron2.data import DatasetCatalog, MetadataCatalog
-from detectron2.structures import BoxMode
 from detectron2 import model_zoo
+from detectron2.data import DatasetCatalog, MetadataCatalog, DatasetMapper, build_detection_test_loader, build_detection_train_loader
+from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.engine import DefaultTrainer, DefaultPredictor
-from detectron2.config import get_cfg
-from detectron2.utils.logger import setup_logger
 from detectron2.utils.visualizer import Visualizer, ColorMode
+from detectron2.data import detection_utils as utils
+from detectron2.utils.logger import setup_logger
+from detectron2.structures import BoxMode
 import detectron2.data.transforms as T
-from detectron2.data import DatasetMapper
+from detectron2.config import get_cfg
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import json
 import random
 import shutil
+import copy
+import torch
+import glob
 from constants import *
 from utils import *
-import copy
-from detectron2.data import detection_utils as utils
-import torch
+
 
 def manage_datasets():
-    os.makedirs(dataset_dir +'train/', exist_ok=True)
-    os.makedirs(dataset_dir +'val/', exist_ok=True)
-    allFileNames = os.listdir(dataset_dir)
-    np.random.shuffle(allFileNames)
-    train_FileNames, val_FileNames = np.split(np.array(allFileNames), [int(len(allFileNames)* train_ratio)])
-    for name in train_FileNames:
-        shutil.copy(dataset_dir+"test_"+str(name)+".jpg", train_dir)
-        shutil.copy(dataset_dir+"test_"+str(name)+".json", train_dir)
-    for name in val_FileNames:
-        shutil.copy(dataset_dir+"test_"+str(name)+".jpg", val_dir)
-        shutil.copy(dataset_dir+"test_"+str(name)+".json", val_dir)
+    os.makedirs(train_dir, exist_ok=True)
+    os.makedirs(test_dir, exist_ok=True)
+    all_fileNames = glob.glob(dataset_dir+"*.jpg")
+    for file in [file.removesuffix('.jpg') for file in all_fileNames]:
+        index = file.split('_')[1]
+        new_name = "new_" + index
+        os.rename(file + str(".jpg"), dataset_dir + new_name + str(".jpg"))
+        os.rename(file + str(".json"), dataset_dir + new_name + str(".json"))
+    np.random.shuffle(all_fileNames)
+    train_filenames, test_filenames = np.split(np.array(all_fileNames), [int(len(all_fileNames)* train_ratio)])
+    for filename in [name[:name.find('.')] for name in train_filenames]:
+        shutil.move(str(filename) + '.json', train_dir)
+        shutil.move(str(filename) + '.jpg', train_dir)
+    for filename in [name[:name.find('.')] for name in test_filenames]:
+        shutil.move(str(filename) + '.json', test_dir)
+        shutil.move(str(filename) + '.jpg', test_dir)
+
 
 def get_data(img_dir):
     dataset_dicts = []
-    for filename in [file for file in os.listdir(img_dir) if file.endswith('.json')]:
+    for index, filename in enumerate([file for file in os.listdir(img_dir) if file.endswith('.json')]):
         json_file = os.path.join(img_dir, filename)
         with open(json_file) as f:
             img_label = json.load(f)
 
         record = {}
-        img = os.path.join(img_dir, img_label["imagePath"])
+
+        img = os.path.join(img_dir, filename.removesuffix('.json') + str('.jpg'))
+        
         record["file_name"] = img
         record["height"] = camera_rows
         record["width"] = camera_cols
+        record["image_id"] = index
         shapes = img_label["shapes"]
         objs = []
         for shape in shapes:
@@ -65,10 +76,12 @@ def get_data(img_dir):
         dataset_dicts.append(record)
     return dataset_dicts
 
+
 def load_datasets():
-    for d in ["train", "val", "test"]:
+    for d in ["train", "test"]:
         DatasetCatalog.register(d, lambda d=d: get_data(dataset_dir + d))
         MetadataCatalog.get(d).set(thing_classes=classes)
+
 
 def custom_cfg():
     cfg = get_cfg()
@@ -76,7 +89,7 @@ def custom_cfg():
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
     cfg.MODEL.DEVICE = "cuda"
     cfg.DATASETS.TRAIN = ("train",)
-    cfg.DATASETS.TEST = ("test")
+    cfg.DATASETS.TEST = ("test",)
     cfg.DATALOADER.NUM_WORKERS = 2
     cfg.SOLVER.IMS_PER_BATCH = 3
     cfg.INPUT.RANDOM_FLIP = "horizontal"
@@ -88,18 +101,19 @@ def custom_cfg():
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = len(classes) 
     return cfg
 
+
 def custom_mapper(dataset_dict):
-    dataset_dict = copy.deepcopy(dataset_dict)  # it will be modified by code below
-    image = utils.read_image(dataset_dict["file_name"], format="BGR")
-    transform_list = [
-        T.Resize((800,600)),
-        T.RandomBrightness(0.8, 1.8),
-        T.RandomContrast(0.6, 1.3),
-        T.RandomSaturation(0.8, 1.4),
-        T.RandomRotation(angle=[90, 90]),
-        T.RandomLighting(0.7),
-        T.RandomFlip(prob=0.4, horizontal=False, vertical=True),
-    ]
+    dataset_dict = copy.deepcopy(dataset_dict)
+    image = utils.read_image(dataset_dict["file_name"], format="RGB")
+    transform_list = [T.Resize((800,800)),
+                      T.RandomFlip(prob=0.5, horizontal=False, vertical=True),
+                      T.RandomFlip(prob=0.5, horizontal=True, vertical=False), 
+                    #T.RandomContrast(0.8, 1.3),
+                    #T.RandomSaturation(0.8, 1.3),
+                    T.RandomRotation(angle=[90, 90]),
+                          T.RandomBrightness(0.1, 2),
+                            T.RandomCrop("absolute", (640, 640))
+                      ]
     image, transforms = T.apply_transform_gens(transform_list, image)
     dataset_dict["image"] = torch.as_tensor(image.transpose(2, 0, 1).astype("float32"))
 
