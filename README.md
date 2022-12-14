@@ -7,6 +7,8 @@ Stelios Karvanis
 
 Renan Ferreira
 
+Marcelo Buga
+
 ## Instalação
 
 ### Modules
