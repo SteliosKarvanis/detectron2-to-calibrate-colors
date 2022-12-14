@@ -85,6 +85,7 @@ def load_datasets():
 
 def custom_cfg():
     cfg = get_cfg()
+    # cfg.MODEL.DEVICE='cpu'  # Uncomment this line to use cpu
     cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
     cfg.MODEL.DEVICE = "cuda"

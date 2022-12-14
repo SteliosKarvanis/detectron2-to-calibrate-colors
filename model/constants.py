@@ -1,4 +1,4 @@
-dataset_dir = "../dataset/"
+dataset_dir = "dataset/"
 train_dir = dataset_dir + "train"
 test_dir = dataset_dir + "test"
 classes = ["red", "pink", "yellow", "blue", "orange", "green"]
