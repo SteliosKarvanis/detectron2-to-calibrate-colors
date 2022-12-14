@@ -60,4 +60,5 @@ evaluator.reset()
 for inputs, outputs in get_all_inputs_outputs("test"):
   evaluator.process(inputs, outputs)
 eval_results = evaluator.evaluate()
+print(eval_results)
 
